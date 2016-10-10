@@ -22,7 +22,8 @@ func TestUnpacking(t *testing.T) {
 
 		So(result, ShouldNotBeNil)
 		So(result.Err, ShouldNotBeNil)
-		So(result.Err.Error(), ShouldContainSubstring, "The system cannot find the file specified.")
+		// SKIP: Give different error message on different OS
+		// So(result.Err.Error(), ShouldContainSubstring, "The system cannot find the file specified.")
 
 		stat, err := os.Stat(target)
 		So(stat, ShouldNotBeNil)
