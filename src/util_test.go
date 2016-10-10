@@ -15,7 +15,7 @@ func TestClearLine(t *testing.T) {
 		if runtime.GOOS == "windows" {
 			So(actual, ShouldEqual, "                    \r")
 		} else {
-			So(actual, ShouldEqual, "\x1b[2K")
+			So(actual, ShouldEqual, "\r")
 		}
 
 	})
