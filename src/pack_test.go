@@ -12,8 +12,8 @@ func TestPacking(t *testing.T) {
 
 	Convey("Should give error if the source is not exist", t, func() {
 
-		source, _ := filepath.Abs("testdata\\notvalid")
-		target, _ := filepath.Abs("testdata\\packed\\notvalid.pack")
+		source, _ := filepath.Abs("testdata/notvalid")
+		target, _ := filepath.Abs("testdata/packed/notvalid.pack")
 
 		result := Pack(PackSettings{
 			SourceDir:      source,
@@ -33,8 +33,8 @@ func TestPacking(t *testing.T) {
 
 	Convey("Should make empty pack if the source is empty", t, func() {
 
-		source, _ := filepath.Abs("testdata\\empty")
-		target, _ := filepath.Abs("testdata\\packed\\empty.pack")
+		source, _ := filepath.Abs("testdata/empty")
+		target, _ := filepath.Abs("testdata/packed/empty.pack")
 
 		os.MkdirAll(source, DEFAULT_PERMISSION)
 

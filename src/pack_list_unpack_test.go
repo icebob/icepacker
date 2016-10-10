@@ -44,9 +44,9 @@ func TestPackListUnpack(t *testing.T) {
 
 		for i, test := range tests {
 
-			source, _ := filepath.Abs("testdata\\simple")
-			target, _ := filepath.Abs(fmt.Sprintf("testdata\\packed\\simple-%d.pack", i))
-			unTarget, _ := filepath.Abs(fmt.Sprintf("testdata\\unpacked\\simple-%d", i))
+			source, _ := filepath.Abs("testdata/simple")
+			target, _ := filepath.Abs(fmt.Sprintf("testdata/packed/simple-%d.pack", i))
+			unTarget, _ := filepath.Abs(fmt.Sprintf("testdata/unpacked/simple-%d", i))
 
 			os.Remove(target)
 			os.Remove(unTarget)
@@ -108,9 +108,9 @@ func TestPackListUnpack(t *testing.T) {
 
 	Convey("Should pack & unpack only one file", t, func() {
 
-		source, _ := filepath.Abs("testdata\\onlyfile.txt")
-		target, _ := filepath.Abs("testdata\\packed\\onlyfile.pack")
-		unTarget, _ := filepath.Abs("testdata\\unpacked")
+		source, _ := filepath.Abs("testdata/onlyfile.txt")
+		target, _ := filepath.Abs("testdata/packed/onlyfile.pack")
+		unTarget, _ := filepath.Abs("testdata/unpacked")
 
 		os.Remove(target)
 		os.Remove(unTarget)
@@ -157,13 +157,13 @@ func TestPackListUnpack(t *testing.T) {
 
 		sourceStat, err := os.Stat(source)
 		So(err, ShouldBeNil)
-		unTargetStat, err := os.Stat(unTarget + "\\onlyfile.txt")
+		unTargetStat, err := os.Stat(unTarget + "/onlyfile.txt")
 		So(err, ShouldBeNil)
 		So(unTargetStat.Size(), ShouldEqual, sourceStat.Size())
 
 		// Clear
 		os.Remove(target)
-		os.Remove(unTarget + "\\onlyfile.txt")
+		os.Remove(unTarget + "/onlyfile.txt")
 
 	})
 
