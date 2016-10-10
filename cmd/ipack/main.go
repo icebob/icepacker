@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"icepacker/src"
-
 	"github.com/urfave/cli"
+
+	"github.com/icebob/icepacker/src"
 )
 
 func main() {

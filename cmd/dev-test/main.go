@@ -7,7 +7,7 @@ import (
 	"runtime/trace"
 	"time"
 
-	"icepacker/src"
+	"github.com/icebob/icepacker/src"
 )
 
 const PPROF = false
