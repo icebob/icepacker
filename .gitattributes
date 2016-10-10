@@ -1,0 +1,2 @@
+testdata/**/*.txt text eol=crlf
+testdata/**/*.html text eol=crlf
