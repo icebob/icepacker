@@ -116,7 +116,7 @@ res := icepacker.Pack(icepacker.PackSettings{
 	Encryption:     ENCRYPTION_AES,
 	Cipher:         icepacker.NewCipherSettings("secretKey"),
 	Includes:       ".js$",
-	Excludes:       "node_modules\/",
+	Excludes:       "node_modules\\/",
 })
 ```
 
