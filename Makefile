@@ -6,20 +6,28 @@ GITSHA:=$(shell git rev-parse HEAD)
 # Get the current local branch name from git (if we can, this may be blank)
 GITBRANCH:=$(shell git symbolic-ref --short HEAD)
 
-LDFLAGS:="-X main.GitCommit=${GITSHA}"
+# BUILD_TIME:=`date +%FT%T%z`
+
+# LDFLAGS for build
+LDFLAGS=-ldflags="-X main.GitCommit=${GITSHA}"
+# LDFLAGS=-ldflags="-X main.GitCommit=${GITSHA} -X main.BuildTime=${BUILD_TIME}"
+
+# Build path style
+BUILD_OUTPUT=-output="releases/{{.OS}}-{{.Arch}}/{{.Dir}}"
+
 
 default: get test build install 
 
 get:
 	go get -t ./...
 	go get github.com/smartystreets/goconvey
-	go get github.com/mitchellh/gox
+	go get github.com/franciscocpg/gox
 
 build: clean
-	@gox -os="windows linux" -arch="386 amd64" -ldflags ${LDFLAGS} -output="releases/{{.OS}}-{{.Arch}}/{{.Dir}}" ./cmd/ipack
+	@gox -os="windows linux" -arch="386 amd64" ${LDFLAGS} ${BUILD_OUTPUT} ./cmd/ipack
 
 build-all: clean
-	@gox -output="releases/{{.OS}}-{{.Arch}}/{{.Dir}}" ./cmd/ipack
+	@gox ${LDFLAGS} ${BUILD_OUTPUT} ./cmd/ipack
 
 clean:
 	@rm -rf releases
