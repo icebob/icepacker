@@ -1,1 +1,0 @@
-watch "go run cmd\dev-test\main.go" -d -u

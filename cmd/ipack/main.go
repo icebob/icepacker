@@ -11,11 +11,17 @@ import (
 	"github.com/icebob/icepacker/src"
 )
 
+// GitCommit contains the commit hash. This will be filled in by the compiler.
+var GitCommit string = "dev"
+
+// Version is the version of CLI app.
+const Version = "0.1.0"
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "ipack"
 	app.Usage = "IcePacker - bundle your files securely"
-	app.Version = "1.0.0"
+	app.Version = Version + " (Git: " + GitCommit + ")"
 
 	app.Commands = []cli.Command{
 		{

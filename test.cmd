@@ -1,4 +1,4 @@
-go install github.com\icebob\icepacker\cmd\ipack
+go install github.com/icebob/icepacker/cmd/ipack
 
 echo Pack and Unpack test1
 ipack pack r:\icepack-test\test1 r:\icepack-test\test1.pack
