@@ -1,4 +1,4 @@
-SHELL=C:/Windows/System32/cmd.exe
+# SHELL=C:/Windows/System32/cmd.exe
 
 # Get the current full sha from git
 GITSHA:=$(shell git rev-parse HEAD)
@@ -16,9 +16,9 @@ LDFLAGS=-ldflags="-X main.GitCommit=${GITSHA}"
 BUILD_OUTPUT=-output="releases/{{.OS}}-{{.Arch}}/{{.Dir}}"
 
 
-default: get test build install 
+default: deps test build install 
 
-get:
+deps:
 	go get -t ./...
 	go get github.com/smartystreets/goconvey
 	go get github.com/franciscocpg/gox

@@ -7,7 +7,7 @@ go:
   - tip
 
 install:
-  - go get -t -v ./...
+  - make deps
 
 scripts:
   - diff -u <(echo -n) <(gofmt -d -s .)
