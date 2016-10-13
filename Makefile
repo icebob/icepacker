@@ -1,4 +1,4 @@
-SHELL=C:/Windows/System32/cmd.exe
+# SHELL=C:/Windows/System32/cmd.exe
 
 # Get the current full sha from git
 GITSHA:=$(shell git rev-parse HEAD)

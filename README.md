@@ -13,56 +13,56 @@ IcePacker is a bundler. Written in Go. Pack every files from a source directory 
 * skip duplicates
 * save & restore permission of files
 
-## CLI usage (with `ipack` executable)
+## CLI usage (with `icepacker` executable)
 
 ### Pack
-Use the `ipack pack` command to create a bundle file. You can compress and encrypt the bundle. 
-For compression use the `--compress`or `-c` flag. The next parameter is the compression type. Currently ipack supports `gzip`.
-For encryption use the `--encrypt` or `-e`flag. The next parameter is the encryption type. Currently ipack supports `aes`. In this case, you need to set your key with `--key` or `-k` flag.
+Use the `icepacker pack` command to create a bundle file. You can compress and encrypt the bundle. 
+For compression use the `--compress`or `-c` flag. The next parameter is the compression type. Currently icepacker supports `gzip`.
+For encryption use the `--encrypt` or `-e`flag. The next parameter is the encryption type. Currently icepacker supports `aes`. In this case, you need to set your key with `--key` or `-k` flag.
 > Note! The bundle doesn't contain the parent folder.
 
 #### Examples
 Create a `myproject.pack` bundle file from the content of the `myproject` folder:
 ```bash
-ipack pack ./myproject myproject.pack
+icepacker pack ./myproject myproject.pack
 ```
 
 Create an AES encrypted bundle file:
 ```bash
-ipack pack --encrypt aes --key SeCr3tKeY ./myproject myproject.pack
+icepacker pack --encrypt aes --key SeCr3tKeY ./myproject myproject.pack
 ```
 
 Create a GZIP compressed bundle file:
 ```bash
-ipack pack --compress gzip ./myproject myproject.pack
+icepacker pack --compress gzip ./myproject myproject.pack
 ```
 
 ### Unpack
-Use the `ipack unpack` command to extract files from a bundle file. The unpacker can recognize that the bundle is encrypted or compressed. No need additional flags. But if the bundle is encrypted, you need to set the key with `--key` or `-k` flag.
+Use the `icepacker unpack` command to extract files from a bundle file. The unpacker can recognize that the bundle is encrypted or compressed. No need additional flags. But if the bundle is encrypted, you need to set the key with `--key` or `-k` flag.
 
 #### Examples
 Extract files from the `myproject.pack` bundle file to the `myproject` folder:
 ```bash
-ipack unpack myproject.pack ./myproject
+icepacker unpack myproject.pack ./myproject
 ```
 
 Extract encrypted bundle file:
 ```bash
-ipack unpack --key SeCr3tKeY myproject.pack ./myproject
+icepacker unpack --key SeCr3tKeY myproject.pack ./myproject
 ```
 
 ### List
-Use the `ipack list` command to list all files what the bundle contains. 
+Use the `icepacker list` command to list all files what the bundle contains. 
 
 #### Examples
 List files from the `myproject.pack` bundle file:
 ```bash
-ipack list myproject.pack
+icepacker list myproject.pack
 ```
 
 List files from an encrypted bundle file:
 ```bash
-ipack list --key SeCr3tKeY myproject.pack
+icepacker list --key SeCr3tKeY myproject.pack
 ```
 
 
