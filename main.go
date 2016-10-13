@@ -18,11 +18,11 @@ var GitCommit string = "dev"
 var BuildTime string = "dev"
 
 // Version is the version of CLI app.
-const Version = "0.1.0"
+const Version = "0.2.0"
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "ipack"
+	app.Name = "icepacker"
 	app.Usage = "IcePacker - bundle your files securely"
 	app.Version = Version + " (Git: " + GitCommit + ") " // + BuildTime
 

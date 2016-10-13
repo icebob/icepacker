@@ -13,6 +13,12 @@ IcePacker is a bundler. Written in Go. Pack every files from a source directory 
 * skip duplicates
 * save & restore permission of files
 
+### Install
+
+```bash
+go get -u github.com/icebob/icepacker
+```
+
 ## CLI usage (with `icepacker` executable)
 
 ### Pack
