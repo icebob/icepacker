@@ -1,15 +1,25 @@
 language: go
 sudo: false
-
 go:
-  - 1.6
-  - 1.7
-  - tip
-
+- 1.6
+- 1.7
+- tip
 install:
-  - make deps
-
+- make deps
 scripts:
-  - diff -u <(echo -n) <(gofmt -d -s .)
-  - go tool vet ./...
-  - go test -v -race ./...
+- diff -u <(echo -n) <(gofmt -d -s .)
+- go tool vet ./...
+- go test -v -race ./...
+before_deploy:
+- make build-all
+deploy:
+  provider: releases
+  user: icebob
+  password:
+    secure: QsdBMdOuWeD+U2DyGiNHSkjJtTod4ZEy2C8qIf6h4bOjNe6TXJrXS/ZwpG51EGM47Mu9TVl2Z19F52D6EPlwZgOO8MnKUwCxbzotRskj7s0lOLrzo3vc3aF9GEut1xJThaqr0uC9xe4stKXXMplnyQpcgJ8Lo9BPAWtOUWUH/EjByK8u4BhQ48T7dr64nZnxlH08zm8tdlu0GzWy7csl2Yfi04qHJ7gTFDS73SaFluWu2qCcGBy1tY3ki477vaBfHaYBLQBJbe5Hbe1NynYhYEP7KH/y0IbrI0FdLSTFpLHZIUw9vjn47v8el8bR8M1ozIV0nAI86i0K52MnMSbPxBM3FJiagmx4h5Z3npKRU27FCkn8ImTAb4NcldF8T+zTU7i41Z7ONm1z9n4OP5mYrebfJDYDWWoyXlR7g+xHmSaV4dg9x773P/WpaoAwUdlIVnYC8RSC++3CO/srv3Cp/n72TnPPuUkKOID7zXoAIGR9WS+LGQTIvJ0YpduJrIo4GMhLAEyXI14vlLATY2MRTEQ1PVLTjTh7KI/2pD3unpz381Hkmx6PzsTdX3N1NbVfrDoNx9Skyk1OZEJhuzYgVhsSzVRSKyyqDvx2WUqAK4yEC2Wb/+vidyT1xr97Fn9/ptjbxlm9WrwX9s7VIKCkjwzF6ovx85V2yLqLr5Baecs=
+  file_glob: true
+  file: releases/**/*
+  skip_cleanup: true
+  on:
+    repo: icebob/icepacker
+    tags: true
