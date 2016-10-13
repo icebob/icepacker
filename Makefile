@@ -1,4 +1,4 @@
-# SHELL=C:/Windows/System32/cmd.exe
+SHELL=C:/Windows/System32/cmd.exe
 
 # Get the current full sha from git
 GITSHA:=$(shell git rev-parse HEAD)
@@ -24,19 +24,19 @@ deps:
 	go get github.com/franciscocpg/gox
 
 build: clean
-	@gox -os="windows linux" -arch="386 amd64" ${LDFLAGS} ${BUILD_OUTPUT} ./cmd/ipack
+	@gox -os="windows linux" -arch="386 amd64" ${LDFLAGS} ${BUILD_OUTPUT} .
 
 build-all: clean
-	@gox ${LDFLAGS} ${BUILD_OUTPUT} ./cmd/ipack
+	@gox ${LDFLAGS} ${BUILD_OUTPUT} .
 
 clean:
 	@rm -rf releases
 
 install:
-	@go install ./cmd/ipack
+	@go install .
 
 run:
-	@go run ./cmd/ipack/main.go
+	@go run ./main.go
 
 ci:
 	@goconvey
@@ -45,7 +45,7 @@ test:
 	@go test -v -timeout 60s -race ./...
 
 cover:
-	@go test -parallel 4 -coverprofile=coverage.out ./src
+	@go test -parallel 4 -coverprofile=coverage.out ./lib
 	@go tool cover -html=coverage.out
 
 vet:

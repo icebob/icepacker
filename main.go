@@ -8,7 +8,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/icebob/icepacker/src"
+	"github.com/icebob/icepacker/lib"
 )
 
 // GitCommit contains the commit hash. This will be filled in by the compiler.

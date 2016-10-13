@@ -1,9 +1,0 @@
-package: icepacker/cmd/ipack
-import:
-- package: github.com/urfave/cli
-  version: d53eb991652b1d438abdd34ce4bfa3ef1539108e
-- package: golang.org/x/crypto
-  version: 81372b2fc2f10bef2a7f338da115c315a56b2726
-  subpackages:
-  - pbkdf2
-- package: icepacker/src

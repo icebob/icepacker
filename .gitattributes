@@ -1,2 +1,2 @@
-src/testdata/**/*.txt text eol=crlf
-src/testdata/**/*.html text eol=crlf
+lib/testdata/**/*.txt text eol=crlf
+lib/testdata/**/*.html text eol=crlf
