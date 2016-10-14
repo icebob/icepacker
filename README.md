@@ -2,6 +2,8 @@
 
 IcePacker is a bundler. Written in Go. Pack every files from a source directory to a bundle file.
 
+[![GoDoc](https://godoc.org/github.com/icebob/icepacker/lib?status.svg)](https://godoc.org/github.com/icebob/icepacker/lib)
+
 [![Build Status](https://travis-ci.org/icebob/icepacker.svg?branch=master)](https://travis-ci.org/icebob/icepacker) 
 
 ## Key features
