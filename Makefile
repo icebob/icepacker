@@ -54,3 +54,5 @@ vet:
 test-cli: install
 	@test.cmd
 
+pack-releases:
+	for f in releases/*/*; do filename=$$(basename $$(dirname "$$f")); tar -cf "releases/icepacker-$$filename.tar.gz" -C $$(dirname $$f) $$(basename $$f) ; done; \
