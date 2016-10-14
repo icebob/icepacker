@@ -5,7 +5,8 @@ IcePacker is a bundler. Written in Go. Pack every files from a source directory 
 [![GoDoc](https://godoc.org/github.com/icebob/icepacker/lib?status.svg)](https://godoc.org/github.com/icebob/icepacker/lib)
 [![Go Report Card](https://goreportcard.com/badge/github.com/icebob/icepacker)](https://goreportcard.com/report/github.com/icebob/icepacker)
 
-[![Build Status](https://travis-ci.org/icebob/icepacker.svg?branch=master)](https://travis-ci.org/icebob/icepacker) 
+[![Build Status](https://travis-ci.org/icebob/icepacker.svg?branch=master)](https://travis-ci.org/icebob/icepacker)
+[![Drone Build Status](https://drone.io/github.com/icebob/icepacker/status.png)](https://drone.io/github.com/icebob/icepacker/latest)
 
 ## Key features
 * Include & exclude filters
