@@ -11,7 +11,7 @@ scripts:
 - go tool vet ./...
 - go test -v -race ./...
 before_deploy:
-- make build-all pack-releases
+- make build packing
 deploy:
   provider: releases
   api_key:

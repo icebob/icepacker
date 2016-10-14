@@ -24,7 +24,7 @@ deps:
 	go get github.com/franciscocpg/gox
 
 build: clean
-	@gox -os="windows linux darwin" -arch="386 amd64" ${LDFLAGS} ${BUILD_OUTPUT} .
+	@gox -os="windows linux darwin" -arch="386 amd64 arm" ${LDFLAGS} ${BUILD_OUTPUT} .
 
 build-all: clean
 	@gox ${LDFLAGS} ${BUILD_OUTPUT} .
@@ -54,5 +54,6 @@ vet:
 test-cli: install
 	@test.cmd
 
-pack-releases:
-	for f in releases/*/*; do filename=$$(basename $$(dirname "$$f")); tar -cf "releases/icepacker-$$filename.tar.gz" -C $$(dirname $$f) $$(basename $$f) ; done; \
+packing:
+	for f in releases/*/icepacker; do filename=$$(basename $$(dirname "$$f")); tar -cf "releases/icepacker-$$filename.tar.gz" -C $$(dirname $$f) $$(basename $$f) ; done; \
+	for f in releases/*/icepacker.exe; do filename=$$(basename $$(dirname "$$f")); zip -j "releases/icepacker-$$filename.zip" $$f; done; \
