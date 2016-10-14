@@ -4,7 +4,7 @@
 GITSHA:=$(shell git rev-parse HEAD)
 
 # Get the current local branch name from git (if we can, this may be blank)
-GITBRANCH:=$(shell git symbolic-ref --short HEAD)
+# GITBRANCH:=$(shell git symbolic-ref --short HEAD)
 
 # BUILD_TIME:=`date +%FT%T%z`
 
@@ -24,7 +24,7 @@ deps:
 	go get github.com/franciscocpg/gox
 
 build: clean
-	@gox -os="windows linux" -arch="386 amd64" ${LDFLAGS} ${BUILD_OUTPUT} .
+	@gox -os="windows linux darwin" -arch="386 amd64" ${LDFLAGS} ${BUILD_OUTPUT} .
 
 build-all: clean
 	@gox ${LDFLAGS} ${BUILD_OUTPUT} .
