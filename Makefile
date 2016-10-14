@@ -16,7 +16,7 @@ LDFLAGS=-ldflags="-X main.GitCommit=${GITSHA}"
 BUILD_OUTPUT=-output="releases/{{.OS}}-{{.Arch}}/{{.Dir}}"
 
 
-default: deps test build install 
+default: deps test cover
 
 deps:
 	go get -t ./...
@@ -41,7 +41,7 @@ run:
 ci:
 	@goconvey
 
-test:
+test: vet
 	@go test -v -timeout 60s -race ./...
 
 cover:

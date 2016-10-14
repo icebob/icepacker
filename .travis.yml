@@ -4,12 +4,6 @@ go:
 - 1.6
 - 1.7
 - tip
-install:
-- make deps
-scripts:
-- diff -u <(echo -n) <(gofmt -d -s .)
-- go tool vet ./...
-- go test -v -race ./...
 before_deploy:
 - make build packing
 deploy:
