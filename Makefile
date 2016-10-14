@@ -24,7 +24,7 @@ deps:
 	go get github.com/franciscocpg/gox
 
 build: clean
-	@gox -os="windows linux darwin" -arch="386 amd64 arm" ${LDFLAGS} ${BUILD_OUTPUT} .
+	@gox -os="windows linux" -arch="386 amd64 arm" ${LDFLAGS} ${BUILD_OUTPUT} .
 
 build-all: clean
 	@gox ${LDFLAGS} ${BUILD_OUTPUT} .
