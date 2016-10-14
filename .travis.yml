@@ -15,6 +15,7 @@ deploy:
   skip_cleanup: true
   on:
     repo: icebob/icepacker
+    tags: true
 notifications:
   email:
     on_success: change
