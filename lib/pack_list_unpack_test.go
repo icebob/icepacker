@@ -24,22 +24,22 @@ func TestPackListUnpack(t *testing.T) {
 			includes string
 			excludes string
 		}{
-			{COMPRESS_NONE, ENCRYPT_NONE, 8, 4358, 1, 775, "", ""},
-			{COMPRESS_NONE, ENCRYPT_AES, 8, 4473, 1, 791, "", ""},
+			{COMPRESS_NONE, ENCRYPT_NONE, 8, 4341, 1, 775, "", ""},
+			{COMPRESS_NONE, ENCRYPT_AES, 8, 4456, 1, 791, "", ""},
 			{COMPRESS_GZIP, ENCRYPT_NONE, 8, 2468, 1, 808, "", ""},
 			{COMPRESS_GZIP, ENCRYPT_AES, 8, 2577, 1, 824, "", ""},
 
 			// Test includes
-			{COMPRESS_NONE, ENCRYPT_NONE, 4, 2921, 0, 0, ".txt$", ""},
+			{COMPRESS_NONE, ENCRYPT_NONE, 4, 2913, 0, 0, ".txt$", ""},
 			{COMPRESS_NONE, ENCRYPT_NONE, 2, 1078, 1, 775, ".png$", ""},
 			{COMPRESS_NONE, ENCRYPT_NONE, 0, 74, 0, 0, ".pdf$", ""},
-			{COMPRESS_NONE, ENCRYPT_NONE, 2, 3470, 0, 0, "dir1", ""},
+			{COMPRESS_NONE, ENCRYPT_NONE, 2, 3462, 0, 0, "dir1", ""},
 
 			// Test excludes
-			{COMPRESS_NONE, ENCRYPT_NONE, 4, 1503, 1, 775, "", ".txt$"},
-			{COMPRESS_NONE, ENCRYPT_NONE, 6, 3347, 0, 0, "", ".png$"},
-			{COMPRESS_NONE, ENCRYPT_NONE, 8, 4358, 1, 775, "", ".dat$"},
-			{COMPRESS_NONE, ENCRYPT_NONE, 6, 3920, 0, 0, "", "dir2"},
+			{COMPRESS_NONE, ENCRYPT_NONE, 4, 1494, 1, 775, "", ".txt$"},
+			{COMPRESS_NONE, ENCRYPT_NONE, 6, 3330, 0, 0, "", ".png$"},
+			{COMPRESS_NONE, ENCRYPT_NONE, 8, 4341, 1, 775, "", ".dat$"},
+			{COMPRESS_NONE, ENCRYPT_NONE, 6, 3912, 0, 0, "", "dir2"},
 		}
 
 		for i, test := range tests {
