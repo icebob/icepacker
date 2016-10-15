@@ -135,7 +135,7 @@ type PackSettings struct {
 `Encryption`|  | 0 - none, 1 - AES
 `Cipher`|  | If use encryption, set a `CipherSettings` struct.
 `OnProgress`|  | On progress chan. Use `ProgressState` struct 
-`OnFinish`|  | On finish chan. User `FinishResult` struct
+`OnFinish`|  | On finish chan. Use `FinishResult` struct
 
 The return value is a `FinishResult` struct. Which contains error, count of files, size...etc.
 
@@ -225,7 +225,7 @@ type UnpackSettings struct {
 `Excludes`|  | Exclude filter. Use regex. > Currently not used
 `Cipher`|  | If the bundle encrypted, set a `CipherSettings` struct.
 `OnProgress`|  | On progress chan. Use `ProgressState` struct 
-`OnFinish`|  | On finish chan. User `FinishResult` struct
+`OnFinish`|  | On finish chan. Use `FinishResult` struct
 
 The return value is a `FinishResult` struct. Which contains error, count of files, size...etc.
 
@@ -348,7 +348,7 @@ fmt.Printf("Total size: %s\n", icepacker.FormatBytes(res.FAT.Size))
 
 
 ### Progress & Finish struct
-These structs uses in `Pack`, `Unpack` and `List` methods.
+These structs uses in `Pack`, `Unpack` and `ListPack` methods.
 
 #### ProgressState struct
 
