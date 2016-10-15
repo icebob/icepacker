@@ -218,16 +218,41 @@ func (this *BundleFile) AddFile(relativePath, file string) (*FATItem, error) {
 	return &item, nil
 }
 
-/*
-
+// ReadFileFromPath searches the FATItem in FAT by `filepath`` and reads
+// the content of the file from the bundle
 func (this *BundleFile) ReadFileFromPath(filepath string) ([]byte, error) {
-    // Kikeresni a FAT-ból, majd meghívni a ReadFile-t
+	for _, item := range this.FAT.Items {
+		if item.Path == filepath {
+			return this.ReadFile(item)
+		}
+	}
+	return nil, errors.New("File not found! Path: " + filepath)
 }
 
-func (this *BundleFile) ReadFile(filepath string) ([]byte, error) {
+// ReadFile reads the content of the file from the bundle
+func (this *BundleFile) ReadFile(item FATItem) ([]byte, error) {
 
+	// Seek to content
+	_, err := this.File.Seek(this.DataBaseOffset+item.Offset, os.SEEK_SET)
+	if err != nil {
+		return nil, err
+	}
+
+	// Read the content
+	blob := make([]byte, item.Size)
+	_, err = this.File.Read(blob)
+	if err != nil {
+		return nil, err
+	}
+
+	// Transform back (decompress, decrypt)
+	content, err := TransformUnpack(blob, this.Settings.Compression, this.Settings.Encryption, this.Settings.CipherKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
 }
-*/
 
 // Flush writes the footer of bundle
 func (this *BundleFile) Flush() error {

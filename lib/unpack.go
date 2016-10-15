@@ -60,6 +60,7 @@ func Unpack(settings UnpackSettings) FinishResult {
 		return settings.FinishError(err)
 	}
 
+	// Open the bundle file
 	bundle, err := OpenBundle(settings.PackFileName, shaKey)
 	if err != nil {
 		return settings.FinishError(err)
@@ -98,23 +99,9 @@ func Unpack(settings UnpackSettings) FinishResult {
 
 			// If not empty
 			if item.Size > 0 {
-				// Seek to content
-				_, err = bundle.File.Seek(bundle.DataBaseOffset+item.Offset, os.SEEK_SET)
-				if err != nil {
-					settings.ProgressError(err, item.Path)
-					return
-				}
 
-				// Read the content
-				blob := make([]byte, item.Size)
-				_, err = bundle.File.Read(blob)
-				if err != nil {
-					settings.ProgressError(err, item.Path)
-					return
-				}
-
-				// Transform back (decompress, decrypt)
-				content, err := TransformUnpack(blob, bundle.Settings.Compression, bundle.Settings.Encryption, shaKey)
+				// Read content of file from bundle
+				content, err := bundle.ReadFile(item)
 				if err != nil {
 					settings.ProgressError(err, item.Path)
 					return
