@@ -185,7 +185,7 @@ for {
 * CLI: pack: if no output, put result to stdout
 * CLI: unpack: if no input, read content from stdin
 * CLI: unpack: if the target exists, with -a flag, append the result to the target file  
-* Lib: resource reader methods. Open bundle, and get only one file as a slice
+* Lib: resource reader methods. Open bundle, and get only one file as a slice (OpenPack, GetFile, ClosePack)
 
 * Checksum calc & check
  

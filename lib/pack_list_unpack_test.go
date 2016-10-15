@@ -66,15 +66,17 @@ func TestPackListUnpack(t *testing.T) {
 			So(result, ShouldNotBeNil)
 			So(result.Err, ShouldBeNil)
 			So(result.FileCount, ShouldEqual, test.fileCount)
-			//So(result.Size, ShouldEqual, test.size) // Skip because it is OS-dependent
 			So(result.DupCount, ShouldEqual, test.dupCount)
 			So(result.DupSize, ShouldEqual, test.dupSize)
 
-			/* Skip because it is OS-dependent
-			stat, err := os.Stat(target)
-			So(err, ShouldBeNil)
-			So(stat.Size(), ShouldEqual, test.size)
-			*/
+			// Skip below asserts because it can be different, if compression enabled
+			if test.compress == COMPRESS_NONE {
+				So(result.Size, ShouldEqual, test.size)
+
+				stat, err := os.Stat(target)
+				So(err, ShouldBeNil)
+				So(stat.Size(), ShouldEqual, test.size)
+			}
 
 			// --- TEST LISTING
 			result2 := ListPack(ListSettings{
@@ -127,14 +129,16 @@ func TestPackListUnpack(t *testing.T) {
 		So(result, ShouldNotBeNil)
 		So(result.Err, ShouldBeNil)
 		So(result.FileCount, ShouldEqual, 1)
-		// So(result.Size, ShouldEqual, 18793)
 		So(result.DupCount, ShouldEqual, 0)
 		So(result.DupSize, ShouldEqual, 0)
 
-		/* Skip because it is OS-dependent
-		stat, err := os.Stat(target)
-		So(err, ShouldBeNil)
-		So(stat.Size(), ShouldEqual, 18793)
+		// Skip below asserts because it can be different, if compression enabled
+		/*
+			So(result.Size, ShouldEqual, 18793)
+
+			stat, err := os.Stat(target)
+			So(err, ShouldBeNil)
+			So(stat.Size(), ShouldEqual, 18793)
 		*/
 
 		// --- TEST LISTING
