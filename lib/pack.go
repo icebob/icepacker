@@ -51,6 +51,55 @@ func (this *PackSettings) FinishError(err error) FinishResult {
 	return ret
 }
 
+// collectFiles walk directories recursively and collect files considering include and exclude filters
+func collectFiles(settings PackSettings) []string {
+	files := []string{}
+
+	filepath.Walk(FixPath(settings.SourceDir), func(path string, f os.FileInfo, err error) error {
+		if err != nil {
+			if f != nil {
+				settings.ProgressError(err, f.Name())
+			} else {
+				settings.ProgressError(err, path)
+			}
+			return err
+		}
+
+		if f != nil {
+			needAppend := true
+
+			// Matching include filter
+			if settings.Includes != "" && !f.IsDir() {
+				if matched, _ := regexp.MatchString(settings.Includes, path); matched {
+				} else {
+					needAppend = false
+				}
+			}
+
+			// Unmatching exclude filter
+			if needAppend && settings.Excludes != "" {
+				if matched, _ := regexp.MatchString(settings.Excludes, path); !matched {
+				} else {
+					needAppend = false
+				}
+			}
+
+			if needAppend {
+				if !f.IsDir() {
+					files = append(files, path)
+				}
+			} else {
+				if f.IsDir() {
+					return filepath.SkipDir
+				}
+			}
+
+		}
+		return nil
+	})
+	return files
+}
+
 // Pack bundles the files of the source directory to the target package file.
 func Pack(settings PackSettings) FinishResult {
 
@@ -72,47 +121,8 @@ func Pack(settings PackSettings) FinishResult {
 
 	files := []string{}
 	if sourceInfo.IsDir() {
-		// Walk source directory & collect files
-		filepath.Walk(FixPath(settings.SourceDir), func(path string, f os.FileInfo, err error) error {
-			if err != nil && f != nil {
-				settings.ProgressError(err, f.Name())
-				return err
-			}
-
-			if f != nil && !f.IsDir() {
-				needAppend := true
-
-				// Matching include filter
-				if settings.Includes != "" {
-					if matched, _ := regexp.MatchString(settings.Includes, path); matched {
-					} else {
-						needAppend = false
-					}
-				}
-
-				// Unmatching exclude filter
-				if needAppend && settings.Excludes != "" {
-					if matched, _ := regexp.MatchString(settings.Excludes, path); !matched {
-					} else {
-						needAppend = false
-					}
-				}
-
-				if needAppend {
-					files = append(files, path)
-				}
-
-			} else {
-				// TODO: match directories too
-				/*dir := filepath.Base(path)
-				  for _, d := range ignoreDirs {
-				      if d == dir {
-				          return filepath.SkipDir
-				      }
-				  }*/
-			}
-			return nil
-		})
+		// Collect files from source directory
+		files = collectFiles(settings)
 	} else {
 		// SourceDir is a file, not a directory
 		files = append(files, settings.SourceDir)
