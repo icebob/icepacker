@@ -1,7 +1,6 @@
 package icepacker
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 )
@@ -52,84 +51,25 @@ func (this *UnpackSettings) FinishError(err error) FinishResult {
 // Unpack extract files from the package file
 func Unpack(settings UnpackSettings) FinishResult {
 
+	// Hash the cipher key
+	shaKey := HashingKey(settings.Cipher)
+
 	// Create target directory
 	err := os.MkdirAll(settings.TargetDir, DEFAULT_PERMISSION)
 	if err != nil {
 		return settings.FinishError(err)
 	}
 
-	// Hash the cipher key
-	shaKey := HashingKey(settings.Cipher)
-
-	// Open package file
-	pack, err := os.Open(settings.PackFileName)
+	bundle, err := OpenBundle(settings.PackFileName, shaKey)
 	if err != nil {
 		return settings.FinishError(err)
 	}
-	defer pack.Close()
-
-	// Get package file info
-	packFileInfo, err := pack.Stat()
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	// Check the size of package (minimum HEADER_SIZE + FOOTER_SIZE)
-	size := packFileInfo.Size()
-	if size < HEADER_SIZE+FOOTER_SIZE {
-		return settings.FinishError(errors.New("File is too small!"))
-	}
-
-	// 1. Jump to end of file
-	_, err = pack.Seek(-FOOTER_SIZE, os.SEEK_END)
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	// Read file footer
-	footer, err := GetFooter(pack)
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	// 2. Ha stimmel a Magic, akkor a fájl elejére ugrani PackSize alapján (lehet, hogy mögé másolt)
-	fileBegin, err := pack.Seek(-footer.PackSize, os.SEEK_END)
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	// 3. Read file header
-	header, err := GetHeader(pack)
-
-	// 4. jump to FAT
-	_, err = pack.Seek(-(FOOTER_SIZE + header.FatSize), os.SEEK_END)
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	// 5. Read FAT
-	fatBuf := make([]byte, header.FatSize)
-	_, err = pack.Read(fatBuf)
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	// Transform back the FAT (decompress, decrypt)
-	fatContent, err := TransformUnpack(fatBuf, header.Compress, header.Encrypt, shaKey)
-	if err != nil {
-		return settings.FinishError(err)
-	}
-
-	fat, err := FATFromJSON(fatContent)
-	if err != nil {
-		return settings.FinishError(err)
-	}
+	defer bundle.Close()
 
 	// 6. Restore files from package
 	totalSize := int64(0)
-	dataBaseOffset := fileBegin + HEADER_SIZE
-	fileCount := len(fat.Items)
-	for i, item := range fat.Items {
+	fileCount := len(bundle.FAT.Items)
+	for i, item := range bundle.FAT.Items {
 
 		func(i int, item FATItem) {
 
@@ -159,7 +99,7 @@ func Unpack(settings UnpackSettings) FinishResult {
 			// If not empty
 			if item.Size > 0 {
 				// Seek to content
-				_, err = pack.Seek(dataBaseOffset+item.Offset, os.SEEK_SET)
+				_, err = bundle.File.Seek(bundle.DataBaseOffset+item.Offset, os.SEEK_SET)
 				if err != nil {
 					settings.ProgressError(err, item.Path)
 					return
@@ -167,14 +107,14 @@ func Unpack(settings UnpackSettings) FinishResult {
 
 				// Read the content
 				blob := make([]byte, item.Size)
-				_, err = pack.Read(blob)
+				_, err = bundle.File.Read(blob)
 				if err != nil {
 					settings.ProgressError(err, item.Path)
 					return
 				}
 
 				// Transform back (decompress, decrypt)
-				content, err := TransformUnpack(blob, header.Compress, header.Encrypt, shaKey)
+				content, err := TransformUnpack(blob, bundle.Settings.Compression, bundle.Settings.Encryption, shaKey)
 				if err != nil {
 					settings.ProgressError(err, item.Path)
 					return

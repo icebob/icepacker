@@ -2,6 +2,7 @@ package icepacker
 
 import (
 	"crypto/sha512"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -16,15 +17,16 @@ type BundleSettings struct {
 
 // BundleFile contains all info from bundle
 type BundleFile struct {
-	Path     string
-	File     *os.File
-	FAT      FAT
-	Header   *Header
-	Footer   *Footer
-	DupCount int
-	DupSize  int64
-	Settings BundleSettings
-	edited   bool
+	Path           string
+	File           *os.File
+	FAT            FAT
+	Header         *Header
+	Footer         *Footer
+	DataBaseOffset int64
+	Settings       BundleSettings
+	DupCount       int
+	DupSize        int64
+	edited         bool
 }
 
 // findDuplication finds the duplicated file contents by hash of content.
@@ -56,10 +58,13 @@ func CreateBundle(filename string, settings BundleSettings) (*BundleFile, error)
 	fat := FAT{Count: 0, Size: 0}
 
 	// Creat new Bundle
-	bundle := BundleFile{Path: filename, File: f, FAT: fat, DupCount: 0, DupSize: 0, Settings: settings, edited: true}
+	bundle := BundleFile{Path: filename, File: f, FAT: fat, Settings: settings, edited: true}
 
 	// Create a new header
 	bundle.Header = NewHeader(settings.Encryption, settings.Compression)
+
+	// Set base offset of data block
+	bundle.DataBaseOffset = HEADER_SIZE
 
 	// Create a new footer
 	bundle.Footer = NewFooter()
@@ -72,11 +77,84 @@ func CreateBundle(filename string, settings BundleSettings) (*BundleFile, error)
 	return &bundle, nil
 }
 
-/*
-func OpenBundle(filename string) (*BundleFile, error) {
+// OpenBundle open an exist bundle file. Load header, footer and FAT
+func OpenBundle(filename string, cipherKey []byte) (*BundleFile, error) {
 
+	// Open package file
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get package file info
+	packFileInfo, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	// Check the size of package (minimum HEADER_SIZE + FOOTER_SIZE)
+	size := packFileInfo.Size()
+	if size < HEADER_SIZE+FOOTER_SIZE {
+		return nil, errors.New("File is too small!")
+	}
+
+	// 1. Jump to end of file
+	_, err = f.Seek(-FOOTER_SIZE, os.SEEK_END)
+	if err != nil {
+		return nil, err
+	}
+
+	// Read file footer
+	footer, err := GetFooter(f)
+	if err != nil {
+		return nil, err
+	}
+
+	// Jump to the begin of bundle by PackSize (maybe bundle is behind other file)
+	fileBegin, err := f.Seek(-footer.PackSize, os.SEEK_END)
+	if err != nil {
+		return nil, err
+	}
+
+	// Calc base offset of data block
+	dataBaseOffset := fileBegin + HEADER_SIZE
+
+	// 3. Read file header
+	header, err := GetHeader(f)
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. jump to FAT
+	_, err = f.Seek(-(FOOTER_SIZE + header.FatSize), os.SEEK_END)
+	if err != nil {
+		return nil, err
+	}
+
+	// 5. Read FAT
+	fatBuf := make([]byte, header.FatSize)
+	_, err = f.Read(fatBuf)
+	if err != nil {
+		return nil, err
+	}
+
+	// Transform back the FAT (decompress, decrypt)
+	fatContent, err := TransformUnpack(fatBuf, header.Compress, header.Encrypt, cipherKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// Recover the FAT struct from JSON
+	fat, err := FATFromJSON(fatContent)
+	if err != nil {
+		return nil, err
+	}
+
+	settings := BundleSettings{Compression: header.Compress, Encryption: header.Encrypt, CipherKey: cipherKey}
+	bundle := BundleFile{Path: filename, File: f, FAT: *fat, Header: header, Footer: footer, Settings: settings, DataBaseOffset: dataBaseOffset}
+
+	return &bundle, nil
 }
-*/
 
 // AddFile adds a file to the bundle file
 func (this *BundleFile) AddFile(relativePath, file string) (*FATItem, error) {
@@ -141,6 +219,11 @@ func (this *BundleFile) AddFile(relativePath, file string) (*FATItem, error) {
 }
 
 /*
+
+func (this *BundleFile) ReadFileFromPath(filepath string) ([]byte, error) {
+    // Kikeresni a FAT-ból, majd meghívni a ReadFile-t
+}
+
 func (this *BundleFile) ReadFile(filepath string) ([]byte, error) {
 
 }
