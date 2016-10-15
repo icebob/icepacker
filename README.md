@@ -10,11 +10,11 @@ IcePacker is a bundler. Written in Go. Pack every files from a source directory 
 
 ## Key features
 * Include & exclude filters
-* Support encryption with AES128
+* Support encryption with AES128 with pbkdf2
 * Support compression with GZIP
 * CLI usage or as a library
-* bundle is concatenable after other file
-* skip duplicates
+* bundle is concatenable behind other file
+* skip duplicated files (check by hash of content & size of file)
 * save & restore permission of files
 
 ### Install
@@ -26,7 +26,7 @@ go get -u github.com/icebob/icepacker
 ## CLI usage (with `icepacker` executable)
 
 ### Pack
-Use the `icepacker pack` command to create a bundle file. You can compress and encrypt the bundle. 
+Use the `icepacker pack` command to create a bundle file. You can also compress and encrypt the bundle. 
 For compression use the `--compress`or `-c` flag. The next parameter is the compression type. Currently icepacker supports `gzip`.
 For encryption use the `--encrypt` or `-e`flag. The next parameter is the encryption type. Currently icepacker supports `aes`. In this case, you need to set your key with `--key` or `-k` flag.
 > Note! The bundle doesn't contain the parent folder.
@@ -78,7 +78,12 @@ icepacker list --key SeCr3tKeY myproject.pack
 
 
 ## Library usage  
-Used constants in lib:
+You can use `icepacker` in your project as a library. In this case you need to import it as:
+```go
+import "github.com/icebob/icepacker/lib"
+```
+
+Used constants in project:
 ```go
 	ENCRYPT_NONE = 0
 	ENCRYPT_AES  = 1
@@ -116,7 +121,22 @@ type PackSettings struct {
 `OnProgress`|  | On progress chan. Use `ProgressState` struct 
 `OnFinish`|  | On finish chan. User `FinishResult` struct
 
-The return value is a `FinishResult` struct. Which contains error, count of files, size...etc. 
+The return value is a `FinishResult` struct. Which contains error, count of files, size...etc.
+
+ #### CipherSettings structure
+```go
+type CipherSettings struct {
+	Key       string
+	Salt      string
+	Iteration int
+}
+```
+##### Description of fields
+|Name|Required|Description|
+-----|--------|--------------------------
+`Key`| yes | The key of cipher.
+`Salt`| yes | Salt for pbkdf2. Default: `icepacker`.
+`Iteration`| yes | Count of iteration for pbkdf2. Default: 10000
 
 ##### Example:
 Simple encrypted packing which includes only `js` files except in the `node_modules` folders.
@@ -181,14 +201,6 @@ for {
 ```
 
 
-## TODO
-* CLI: pack: if no output, put result to stdout
-* CLI: unpack: if no input, read content from stdin
-* CLI: unpack: if the target exists, with -a flag, append the result to the target file  
-* Lib: resource reader methods. Open bundle, and get only one file as a slice (OpenPack, GetFile, ClosePack)
-
-* Checksum calc & check
- 
 ## License
 icepacker is available under the [MIT license](https://tldrlegal.com/license/mit-license).
 
