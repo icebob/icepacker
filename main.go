@@ -18,7 +18,7 @@ var GitCommit string = "dev"
 var BuildTime string = "dev"
 
 // Version is the version of CLI app.
-const Version = "0.2.0"
+const Version = "0.2.1"
 
 func main() {
 	app := cli.NewApp()
