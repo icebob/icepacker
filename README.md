@@ -204,7 +204,7 @@ for {
 
 ### Unpack
 For unpacking, you need to create & load an `UnpackSettings` struct and pass to the `icepacker.Unpack` func.
-#### PackSettings structure
+#### UnpackSettings structure
 ```go
 type UnpackSettings struct {
 	PackFileName string
@@ -235,7 +235,7 @@ Simple unpacking an encrypted bundle.
 ```go
 res := icepacker.Pack(icepacker.PackSettings{
 	PackFileName:   "/home/user/bundle.pack",
-	TargetDir: 		"/home/user/myfiles,
+	TargetDir: 		"/home/user/myfiles",
 	Cipher:         icepacker.NewCipherSettings("secretKey")
 })
 ```
@@ -251,7 +251,7 @@ chanFinish := make(chan icepacker.FinishResult)
 // Start packing in a go routine
 go icepacker.Pack(icepacker.PackSettings{
 	PackFileName:   "/home/user/bundle.pack",
-	TargetDir: 		"/home/user/myfiles,
+	TargetDir: 		"/home/user/myfiles",
 	Cipher:         icepacker.NewCipherSettings("secretKey"),
 	OnProgress:     chanProgress,
 	OnFinish:       chanFinish,
@@ -285,11 +285,72 @@ for {
 	}
 }
 ```
+
 ### List
-If you only want to list files of the bundle, use the `icepacker.List` method.
+If you only want to list files of the bundle, use the `icepacker.ListPack` method. You need to create & load an `ListSettings` struct and pass to the `icepacker.ListPack` func.
+#### ListSettings structure
+```go
+type ListSettings struct {
+	PackFileName string
+	Cipher       CipherSettings
+	OnFinish     chan ListResult
+}
+```
+##### Description of fields
+|Name|Required|Description|
+-----|--------|--------------------------
+`PackFileName`| yes | The bundle file path. Should be **absolute** path.
+`Cipher`|  | If the bundle encrypted, set a `CipherSettings` struct.
+`OnFinish`|  | On finish chan. Use `ListResult` struct
+
+The return value is a `ListResult` struct. Which contains error and FAT.
+
+##### Example:
+Simple listing an encrypted bundle.
+
+```go
+res := icepacker.ListPack(icepacker.ListSettings{
+	PackFileName:   "/home/user/bundle.pack",
+	Cipher:         icepacker.NewCipherSettings("secretKey")
+})
+```
+
+If you want to running `ListPack` in a go routine you need to set `OnFinish` channel.
+
+##### Example:
+Listing in a new go routine and show the result on stdout.
+```go
+// Create channels
+chanFinish := make(chan icepacker.ListResult)
+
+// Start listing in a go routine
+go icepacker.ListPack(icepacker.ListSettings{
+	PackFileName:   "/home/user/bundle.pack",
+	Cipher:       icepacker.NewCipherSettings(c.String("key")),
+	OnFinish:     chanFinish,
+})
+
+// Wait for finish
+res := <-chanFinish
+
+if res.Err != nil {
+	return cli.NewExitError(fmt.Sprintf("%s", res.Err), 3)
+}
+
+fmt.Println("Files in package:")
+for _, item := range res.FAT.Items {
+	fmt.Printf("  %s (%s)\n", item.Path, icepacker.FormatBytes(item.OrigSize))
+}
+
+fmt.Printf("\nFile count: %d\n", res.FAT.Count)
+fmt.Printf("Total size: %s\n", icepacker.FormatBytes(res.FAT.Size))
+```
+
 
 ### Progress & Finish struct
 These structs uses in `Pack`, `Unpack` and `List` methods.
+
+#### ProgressState struct
 
 ```go
 type ProgressState struct {
@@ -306,6 +367,8 @@ type ProgressState struct {
 `Total`| Count of files
 `Index`| Index of current file (You can calculate percentage by `Index` and `Total`
 `CurrentFile`| Path of the current file
+
+#### FinishResult struct
 
 ```go
 type FinishResult struct {
@@ -324,6 +387,8 @@ type FinishResult struct {
 `Size`| Size of the bundle
 `DupCount`| Count of the skipped duplicated files
 `DupSize`| Size of the skipped duplicated files
+
+#### ListResult struct
 
 ```go
 type ListResult struct {
