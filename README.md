@@ -91,6 +91,22 @@ Used constants in project:
 	COMPRESS_NONE = 0
 	COMPRESS_GZIP = 1
 ```
+#### CipherSettings structure
+The `CipherSettings` records the settings of encryption and hashing of key.
+```go
+type CipherSettings struct {
+	Key       string
+	Salt      string
+	Iteration int
+}
+```
+##### Description of fields
+|Name|Required|Description|
+-----|--------|--------------------------
+`Key`| yes | The key of cipher.
+`Salt`| yes | Salt for pbkdf2. Default: `icepacker`.
+`Iteration`| yes | Count of iteration for pbkdf2. Default: 10000
+
 
 ### Pack
 For packing, you need to create & load a `PackSettings` struct and pass to the `icepacker.Pack` func.
@@ -123,27 +139,13 @@ type PackSettings struct {
 
 The return value is a `FinishResult` struct. Which contains error, count of files, size...etc.
 
- #### CipherSettings structure
-```go
-type CipherSettings struct {
-	Key       string
-	Salt      string
-	Iteration int
-}
-```
-##### Description of fields
-|Name|Required|Description|
------|--------|--------------------------
-`Key`| yes | The key of cipher.
-`Salt`| yes | Salt for pbkdf2. Default: `icepacker`.
-`Iteration`| yes | Count of iteration for pbkdf2. Default: 10000
 
 ##### Example:
 Simple encrypted packing which includes only `js` files except in the `node_modules` folders.
 ```go
 res := icepacker.Pack(icepacker.PackSettings{
-	SourceDir:      source,
-	TargetFilename: target,
+	SourceDir:      "/home/user/myfiles",
+	TargetFilename: "/home/user/bundle.pack",
 	Compression:    COMPRESSION_NONE,
 	Encryption:     ENCRYPTION_AES,
 	Cipher:         icepacker.NewCipherSettings("secretKey"),
@@ -162,8 +164,8 @@ chanFinish := make(chan icepacker.FinishResult)
 
 // Start packing in a go routine
 go icepacker.Pack(icepacker.PackSettings{
-	SourceDir:      source,
-	TargetFilename: target,
+	SourceDir:      "/home/user/myfiles",
+	TargetFilename: "/home/user/bundle.pack",
 	Compression:    COMPRESSION_NONE,
 	Encryption:     ENCRYPTION_AES,
 	Cipher:         icepacker.NewCipherSettings("secretKey"),
@@ -200,6 +202,140 @@ for {
 }
 ```
 
+### Unpack
+For unpacking, you need to create & load an `UnpackSettings` struct and pass to the `icepacker.Unpack` func.
+#### PackSettings structure
+```go
+type UnpackSettings struct {
+	PackFileName string
+	TargetDir    string
+	Includes     string
+	Excludes     string
+	Cipher       CipherSettings
+	OnProgress   chan ProgressState
+	OnFinish     chan FinishResult
+}
+```
+##### Description of fields
+|Name|Required|Description|
+-----|--------|--------------------------
+`PackFileName`| yes | The bundle file path. Should be **absolute** path.
+`TargetDir`| yes | The output directory path. Should be **absolute** path.
+`Includes`|  | Include filter. Use regex. > Currently not used
+`Excludes`|  | Exclude filter. Use regex. > Currently not used
+`Cipher`|  | If the bundle encrypted, set a `CipherSettings` struct.
+`OnProgress`|  | On progress chan. Use `ProgressState` struct 
+`OnFinish`|  | On finish chan. User `FinishResult` struct
+
+The return value is a `FinishResult` struct. Which contains error, count of files, size...etc.
+
+
+##### Example:
+Simple unpacking an encrypted bundle.
+```go
+res := icepacker.Pack(icepacker.PackSettings{
+	PackFileName:   "/home/user/bundle.pack",
+	TargetDir: 		"/home/user/myfiles,
+	Cipher:         icepacker.NewCipherSettings("secretKey")
+})
+```
+
+If you want to running `unpack` in a go routine you need to set `OnProgress`and `OnFinish` channels.
+##### Example:
+Unpacking in a new go routine and show a progressbar on stdout.
+```go
+// Create channels
+chanProgress := make(chan icepacker.ProgressState, 10)
+chanFinish := make(chan icepacker.FinishResult)
+
+// Start packing in a go routine
+go icepacker.Pack(icepacker.PackSettings{
+	PackFileName:   "/home/user/bundle.pack",
+	TargetDir: 		"/home/user/myfiles,
+	Cipher:         icepacker.NewCipherSettings("secretKey"),
+	OnProgress:     chanProgress,
+	OnFinish:       chanFinish,
+})
+
+// Wait for progress & finish
+done := false
+for {
+	select {
+	case state := <-chanProgress:
+		if state.Err != nil {
+			fmt.Printf("ERROR: %s (file: %s)\n", state.Err, state.CurrentFile)
+		} else {
+			icepacker.PrintProgress("Unpacking files", state.Index, state.Total)
+		}
+	case res := <-chanFinish:
+		if res.Err != nil {
+			return cli.NewExitError(fmt.Sprintf("%s", res.Err), 3)
+		}
+
+		elapsed := time.Since(start)
+		fmt.Printf("\nTotal size: %s\n", icepacker.FormatBytes(res.Size))
+		fmt.Printf("File count: %d\n", res.FileCount)
+		fmt.Printf("Elapsed time: %s\n", elapsed)
+
+		done = true
+	}
+
+	if done {
+		break
+	}
+}
+```
+### List
+If you only want to list files of the bundle, use the `icepacker.List` method.
+
+### Progress & Finish struct
+These structs uses in `Pack`, `Unpack` and `List` methods.
+
+```go
+type ProgressState struct {
+	Err         error
+	Total       int
+	Index       int
+	CurrentFile string
+}
+```
+##### Description of fields
+|Name|Description|
+-----|--------------------------
+`Err`| Contains an `error`if error occured. Otherwise `nil`.
+`Total`| Count of files
+`Index`| Index of current file (You can calculate percentage by `Index` and `Total`
+`CurrentFile`| Path of the current file
+
+```go
+type FinishResult struct {
+	Err       error
+	FileCount int64
+	Size      int64
+	DupCount  int
+	DupSize   int64
+}
+```
+##### Description of fields
+|Name|Description|
+-----|--------------------------
+`Err`| Contains an `error`if error occured. Otherwise `nil`.
+`FileCount`| Count of files
+`Size`| Size of the bundle
+`DupCount`| Count of the skipped duplicated files
+`DupSize`| Size of the skipped duplicated files
+
+```go
+type ListResult struct {
+	Err error
+	FAT *FAT
+}
+```
+##### Description of fields
+|Name|Description|
+-----|--------------------------
+`Err`| Contains an `error`if error occured. Otherwise `nil`.
+`FAT`| `FAT` (file list) of the bundle
 
 ## License
 icepacker is available under the [MIT license](https://tldrlegal.com/license/mit-license).
