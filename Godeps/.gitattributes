@@ -1,0 +1,2 @@
+lib/testdata/**/*.txt text eol=lf
+lib/testdata/**/*.html text eol=lf
