@@ -74,6 +74,11 @@ icepacker unpack --key SeCr3tKeY myproject.pack ./myproject
 ### List
 Use the `icepacker list` command to list all files what the bundle contains. 
 
+#### Available flags:
+|Flag|Short flag| Description|
+-----|----------|-------------
+`--key <cipherkey>`| `-k <cipherkey>` | Key for decryption.
+
 #### Examples
 List files from the `myproject.pack` bundle file:
 ```bash
