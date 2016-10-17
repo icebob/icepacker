@@ -1,6 +1,6 @@
-# :package: IcePacker
+# IcePacker
 
-IcePacker is a bundler. Written in Go. Pack every files from a source directory to a bundle file.
+:package: IcePacker is a bundler. Written in Go. Pack every files from a source directory to a bundle file.
 
 [![GoDoc](https://godoc.org/github.com/icebob/icepacker/lib?status.svg)](https://godoc.org/github.com/icebob/icepacker/lib)
 [![Go Report Card](https://goreportcard.com/badge/github.com/icebob/icepacker)](https://goreportcard.com/report/github.com/icebob/icepacker)
