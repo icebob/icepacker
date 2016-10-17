@@ -35,6 +35,9 @@ clean:
 install:
 	@go install .
 
+godep:
+	@godep save
+
 run:
 	@go run ./main.go
 

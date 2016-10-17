@@ -32,7 +32,7 @@ func TestFooterWrite(t *testing.T) {
 		w := new(bytes.Buffer)
 		err := footer.Write(w)
 		So(err, ShouldBeNil)
-		So(w.Bytes(), ShouldResemble, []uint8{7, 91, 205, 21, 0, 0, 0, 0, 0, 0, 48, 57, 73, 80, 65, 67, 75})
+		So(w.Bytes(), ShouldResemble, []uint8{21, 205, 91, 7, 57, 48, 0, 0, 0, 0, 0, 0, 73, 80, 65, 67, 75})
 	})
 
 }
@@ -40,7 +40,7 @@ func TestFooterWrite(t *testing.T) {
 func TestGetFooter(t *testing.T) {
 
 	Convey("Should load Footer struct from Reader", t, func() {
-		r := bytes.NewReader([]uint8{7, 91, 205, 21, 0, 0, 0, 0, 0, 0, 48, 57, 73, 80, 65, 67, 75})
+		r := bytes.NewReader([]uint8{21, 205, 91, 7, 57, 48, 0, 0, 0, 0, 0, 0, 73, 80, 65, 67, 75})
 
 		footer, err := GetFooter(r)
 		So(err, ShouldBeNil)
@@ -59,7 +59,7 @@ func TestGetFooter(t *testing.T) {
 	})
 
 	Convey("Should give error if size Magic is not equal", t, func() {
-		r := bytes.NewReader([]uint8{7, 91, 205, 21, 0, 0, 0, 0, 0, 0, 48, 57, 73, 80, 65, 67, 72})
+		r := bytes.NewReader([]uint8{21, 205, 91, 7, 57, 48, 0, 0, 0, 0, 0, 0, 73, 80, 65, 67, 72})
 
 		footer, err := GetFooter(r)
 		So(err, ShouldResemble, errors.New("Invalid file format!"))
@@ -67,10 +67,10 @@ func TestGetFooter(t *testing.T) {
 	})
 
 	Convey("Should give error if PackSize is negative", t, func() {
-		r := bytes.NewReader([]uint8{7, 91, 205, 21, 255, 255, 255, 255, 255, 255, 255, 57, 73, 80, 65, 67, 75})
+		r := bytes.NewReader([]uint8{21, 205, 91, 7, 255, 255, 255, 255, 255, 255, 255, 255, 73, 80, 65, 67, 75})
 
 		footer, err := GetFooter(r)
-		So(err, ShouldResemble, errors.New("Invalid pack size!"))
+		So(err, ShouldResemble, errors.New("Invalid pack size -1!"))
 		So(footer, ShouldBeNil)
 	})
 }

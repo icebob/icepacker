@@ -9,6 +9,10 @@
 			"Rev": "d53eb991652b1d438abdd34ce4bfa3ef1539108e"
 		},
 		{
+			"ImportPath": "github.com/zhuangsirui/binpacker",
+			"Rev": "1acd007463154027caada42ece90fcf538f9b2dc"
+		},
+		{
 			"ImportPath": "golang.org/x/crypto/pbkdf2",
 			"Rev": "81372b2fc2f10bef2a7f338da115c315a56b2726"
 		}

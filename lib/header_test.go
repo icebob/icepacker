@@ -36,7 +36,7 @@ func TestHeaderWrite(t *testing.T) {
 		w := new(bytes.Buffer)
 		err := header.Write(w)
 		So(err, ShouldBeNil)
-		So(w.Bytes(), ShouldResemble, []uint8{73, 80, 65, 67, 75, 1, 1, 1, 0, 0, 0, 0, 0, 0, 48, 57, 0, 0, 0, 0, 7, 91, 205, 21})
+		So(w.Bytes(), ShouldResemble, []uint8{73, 80, 65, 67, 75, 1, 1, 1, 57, 48, 0, 0, 0, 0, 0, 0, 21, 205, 91, 7, 0, 0, 0, 0})
 	})
 
 }
@@ -44,7 +44,7 @@ func TestHeaderWrite(t *testing.T) {
 func TestGetHeader(t *testing.T) {
 
 	Convey("Should load Header struct from Reader", t, func() {
-		r := bytes.NewReader([]uint8{73, 80, 65, 67, 75, 1, 1, 1, 0, 0, 0, 0, 0, 0, 48, 57, 0, 0, 0, 0, 7, 91, 205, 21})
+		r := bytes.NewReader([]uint8{73, 80, 65, 67, 75, 1, 1, 1, 57, 48, 0, 0, 0, 0, 0, 0, 21, 205, 91, 7, 0, 0, 0, 0})
 
 		header, err := GetHeader(r)
 		So(err, ShouldBeNil)
@@ -66,7 +66,7 @@ func TestGetHeader(t *testing.T) {
 	})
 
 	Convey("Should give error if size Magic is not equal", t, func() {
-		r := bytes.NewReader([]uint8{65, 80, 65, 67, 75, 1, 1, 1, 0, 0, 0, 0, 0, 0, 48, 57, 0, 0, 0, 0, 7, 91, 205, 21})
+		r := bytes.NewReader([]uint8{65, 80, 65, 67, 75, 1, 1, 1, 57, 48, 0, 0, 0, 0, 0, 0, 21, 205, 91, 7, 0, 0, 0, 0})
 
 		header, err := GetHeader(r)
 		So(err, ShouldResemble, errors.New("Invalid file format!"))
@@ -74,7 +74,7 @@ func TestGetHeader(t *testing.T) {
 	})
 
 	Convey("Should give error if size Magic is not equal", t, func() {
-		r := bytes.NewReader([]uint8{73, 80, 65, 67, 75, 2, 1, 1, 0, 0, 0, 0, 0, 0, 48, 57, 0, 0, 0, 0, 7, 91, 205, 21})
+		r := bytes.NewReader([]uint8{73, 80, 65, 67, 75, 2, 1, 1, 57, 48, 0, 0, 0, 0, 0, 0, 21, 205, 91, 7, 0, 0, 0, 0})
 
 		header, err := GetHeader(r)
 		So(err, ShouldResemble, errors.New("Invalid file version (2)!"))

@@ -15,7 +15,7 @@ const MAGIC_SIZE = 5
 
 const VERSION_1 = 1
 
-var ByteOrder = binary.BigEndian
+var ByteOrder = binary.LittleEndian
 
 // Encryption enum constants
 const (
