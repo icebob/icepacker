@@ -27,9 +27,14 @@ go get -u github.com/icebob/icepacker
 
 ### Pack
 Use the `icepacker pack` command to create a bundle file. You can also compress and encrypt the bundle. 
-For compression use the `--compress`or `-c` flag. The next parameter is the compression type. Currently icepacker supports `gzip`.
-For encryption use the `--encrypt` or `-e`flag. The next parameter is the encryption type. Currently icepacker supports `aes`. In this case, you need to set your key with `--key` or `-k` flag.
 > Note! The bundle doesn't contain the parent folder.
+
+#### Available flags:
+|Flag|Short flag| Description|
+-----|----------|-------------
+`--compress <type>`| `-c <type>` | Compress the content of files. Available compression types: `gzip`
+`--encrypt <type>`| `-e <type>` | Encrypt the content of files. Need to set `key`! Available encryption types: `aes`
+`--key <cipherkey>`| `-k <cipherkey>` | Key for encryption.
 
 #### Examples
 Create a `myproject.pack` bundle file from the content of the `myproject` folder:
@@ -48,7 +53,12 @@ icepacker pack --compress gzip ./myproject myproject.pack
 ```
 
 ### Unpack
-Use the `icepacker unpack` command to extract files from a bundle file. The unpacker can recognize that the bundle is encrypted or compressed. No need additional flags. But if the bundle is encrypted, you need to set the key with `--key` or `-k` flag.
+Use the `icepacker unpack` command to extract files from a bundle file. The unpacker can recognize that the bundle is encrypted or compressed. No need additional flags. 
+
+#### Available flags:
+|Flag|Short flag| Description|
+-----|----------|-------------
+`--key <cipherkey>`| `-k <cipherkey>` | Key for decryption.
 
 #### Examples
 Extract files from the `myproject.pack` bundle file to the `myproject` folder:
