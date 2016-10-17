@@ -125,7 +125,7 @@ func pack(c *cli.Context) error {
 			if state.Err != nil {
 				fmt.Printf("ERROR: %s (file: %s)\n", state.Err, state.CurrentFile)
 			} else {
-				icepacker.PrintProgress("Packing files", state.Index, state.Total)
+				PrintProgress("Packing files", state.Index, state.Total)
 			}
 		case res := <-chanFinish:
 			if res.Err != nil {
@@ -133,8 +133,8 @@ func pack(c *cli.Context) error {
 			}
 
 			elapsed := time.Since(start)
-			fmt.Printf("\nPack size: %s\n", icepacker.FormatBytes(res.Size))
-			fmt.Printf("File count: %d, skipped duplicate: %d (%s)\n", res.FileCount, res.DupCount, icepacker.FormatBytes(res.DupSize))
+			fmt.Printf("\nPack size: %s\n", FormatBytes(res.Size))
+			fmt.Printf("File count: %d, skipped duplicate: %d (%s)\n", res.FileCount, res.DupCount, FormatBytes(res.DupSize))
 			fmt.Printf("Elapsed time: %s\n", elapsed)
 
 			done = true
@@ -173,7 +173,7 @@ func unpack(c *cli.Context) error {
 			if state.Err != nil {
 				fmt.Printf("ERROR: %s (file: %s)\n", state.Err, state.CurrentFile)
 			} else {
-				icepacker.PrintProgress("Unpacking files", state.Index, state.Total)
+				PrintProgress("Unpacking files", state.Index, state.Total)
 			}
 		case res := <-chanFinish:
 			if res.Err != nil {
@@ -181,7 +181,7 @@ func unpack(c *cli.Context) error {
 			}
 
 			elapsed := time.Since(start)
-			fmt.Printf("\nTotal size: %s\n", icepacker.FormatBytes(res.Size))
+			fmt.Printf("\nTotal size: %s\n", FormatBytes(res.Size))
 			fmt.Printf("File count: %d\n", res.FileCount)
 			fmt.Printf("Elapsed time: %s\n", elapsed)
 
@@ -218,11 +218,11 @@ func list(c *cli.Context) error {
 
 	fmt.Println("Files in package:")
 	for _, item := range res.FAT.Items {
-		fmt.Printf("  %s (%s)\n", filepath.FromSlash(item.Path), icepacker.FormatBytes(item.OrigSize))
+		fmt.Printf("  %s (%s)\n", filepath.FromSlash(item.Path), FormatBytes(item.OrigSize))
 	}
 
 	fmt.Printf("\nFile count: %d\n", res.FAT.Count)
-	fmt.Printf("Total size: %s\n", icepacker.FormatBytes(res.FAT.Size))
+	fmt.Printf("Total size: %s\n", FormatBytes(res.FAT.Size))
 
 	return nil
 }

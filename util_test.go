@@ -1,4 +1,4 @@
-package icepacker
+package main
 
 import (
 	"runtime"
