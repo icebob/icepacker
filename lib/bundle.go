@@ -3,6 +3,7 @@ package icepacker
 import (
 	"crypto/sha512"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -80,10 +81,17 @@ func CreateBundle(filename string, settings BundleSettings) (*BundleFile, error)
 // OpenBundle open an exist bundle file. Load header, footer and FAT
 func OpenBundle(filename string, cipherKey []byte) (*BundleFile, error) {
 
-	// Open package file
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
+	var f *os.File
+	var err error
+
+	if filename == "-" {
+		f = os.Stdin
+	} else {
+		// Open package file
+		f, err = os.Open(filename)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Get package file info
@@ -95,7 +103,7 @@ func OpenBundle(filename string, cipherKey []byte) (*BundleFile, error) {
 	// Check the size of package (minimum HEADER_SIZE + FOOTER_SIZE)
 	size := packFileInfo.Size()
 	if size < HEADER_SIZE+FOOTER_SIZE {
-		return nil, errors.New("File is too small!")
+		return nil, fmt.Errorf("File is too small! Size: %d", size)
 	}
 
 	// 1. Jump to end of file
