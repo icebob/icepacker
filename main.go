@@ -149,7 +149,18 @@ func pack(c *cli.Context) error {
 }
 
 func unpack(c *cli.Context) error {
-	if len(c.Args()) < 2 {
+	bundleFile := "-" // read from STDIN
+	targetDir := "."  // current directory
+
+	argsLen := len(c.Args())
+	switch argsLen {
+	case 0:
+	case 1:
+		bundleFile = c.Args()[0]
+	case 2:
+		bundleFile = c.Args()[0]
+		targetDir = c.Args()[1]
+	default:
 		cli.ShowCommandHelp(c, "unpack")
 		return cli.NewExitError("Please set package filename and target directory", 2)
 	}
@@ -159,8 +170,8 @@ func unpack(c *cli.Context) error {
 
 	start := time.Now()
 	go icepacker.Unpack(icepacker.UnpackSettings{
-		PackFileName: c.Args()[0],
-		TargetDir:    c.Args()[1],
+		PackFileName: bundleFile,
+		TargetDir:    targetDir,
 		Cipher:       icepacker.NewCipherSettings(c.String("key")),
 		OnProgress:   chanProgress,
 		OnFinish:     chanFinish,
@@ -197,7 +208,14 @@ func unpack(c *cli.Context) error {
 }
 
 func list(c *cli.Context) error {
-	if len(c.Args()) < 1 {
+	bundleFile := "-" // read from STDIN
+
+	argsLen := len(c.Args())
+	switch argsLen {
+	case 0:
+	case 1:
+		bundleFile = c.Args()[0]
+	default:
 		cli.ShowCommandHelp(c, "list")
 		return cli.NewExitError("Please set package filename", 2)
 	}
@@ -205,7 +223,7 @@ func list(c *cli.Context) error {
 	chanFinish := make(chan icepacker.ListResult)
 
 	go icepacker.ListPack(icepacker.ListSettings{
-		PackFileName: c.Args()[0],
+		PackFileName: bundleFile,
 		Cipher:       icepacker.NewCipherSettings(c.String("key")),
 		OnFinish:     chanFinish,
 	})

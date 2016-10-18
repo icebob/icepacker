@@ -34,7 +34,7 @@ const (
 func FixPath(path string) string {
 	const Prefix = `\\?\`
 
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" && len(path) > 250 {
 
 		if !strings.HasPrefix(path, Prefix) {
 			if strings.HasPrefix(path, `\\`) {

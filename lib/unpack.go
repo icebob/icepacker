@@ -80,7 +80,7 @@ func Unpack(settings UnpackSettings) FinishResult {
 			// Create directories by fullPath
 			err = os.MkdirAll(dir, DEFAULT_PERMISSION)
 			if err != nil {
-				settings.ProgressError(err, item.Path)
+				settings.ProgressError(err, dir)
 				return
 			}
 

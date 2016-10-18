@@ -16,14 +16,16 @@ func TestFixPath(t *testing.T) {
 
 	Convey("Modify path in Windows", t, func() {
 
+		longPath := "foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz\\foo\\bar\\baz"
+
 		var tests = []struct {
 			value    string
 			expected string
 		}{
-			{"index.js", "\\\\?\\index.js"},
-			{"foo\\bar\\baz", "\\\\?\\foo\\bar\\baz"},
-			{"c:\\foo\\bar\\baz", "\\\\?\\c:\\foo\\bar\\baz"},
-			{"\\\\computer\\foo\\bar", "\\\\?\\UNC\\computer\\foo\\bar"},
+			{"index.js", "index.js"},
+			{longPath, "\\\\?\\" + longPath},
+			{"c:\\" + longPath, "\\\\?\\c:\\" + longPath},
+			{"\\\\computer\\" + longPath, "\\\\?\\UNC\\computer\\" + longPath},
 		}
 
 		for _, test := range tests {
