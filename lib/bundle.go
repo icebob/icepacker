@@ -29,8 +29,8 @@ type BundleFile struct {
 	edited         bool
 }
 
-// findDuplication finds the duplicated file contents by hash of content.
-func (this *BundleFile) findDuplicate(newItem *FATItem) *FATItem {
+// FindDuplication finds the duplicated file contents by hash of content.
+func (this *BundleFile) FindDuplicate(newItem *FATItem) *FATItem {
 	for _, item := range this.FAT.Items {
 		if newItem.Hash == item.Hash && newItem.OrigSize == item.OrigSize {
 			return &item
@@ -188,7 +188,7 @@ func (this *BundleFile) AddFile(relativePath, file string) (*FATItem, error) {
 	item.Hash = sha512.Sum512(content)
 
 	// Find duplicated files by hash & size
-	dup := this.findDuplicate(&item)
+	dup := this.FindDuplicate(&item)
 	if dup != nil {
 		// Inc duplicated counters
 		this.DupCount++
@@ -254,8 +254,8 @@ func (this *BundleFile) ReadFile(item FATItem) ([]byte, error) {
 	return content, nil
 }
 
-// Flush writes the footer of bundle
-func (this *BundleFile) Flush() error {
+// Finalize writes the footer of bundle
+func (this *BundleFile) Finalize() error {
 	if this.edited {
 		// Encode FAT to JSON
 		json, err := this.FAT.JSON()

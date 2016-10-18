@@ -159,7 +159,7 @@ func Pack(settings PackSettings) FinishResult {
 	// Update progress state
 	settings.Progress(fileCount, fileCount, "")
 
-	err = bundle.Flush()
+	err = bundle.Finalize()
 	if err != nil {
 		return settings.FinishError(err)
 	}
