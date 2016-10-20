@@ -88,7 +88,7 @@ func OpenBundle(filename string, cipherKey []byte) (*BundleFile, error) {
 		f = os.Stdin
 	} else {
 		// Open package file
-		f, err = os.Open(filename)
+		f, err = os.OpenFile(filename, os.O_RDWR, 0666)
 		if err != nil {
 			return nil, err
 		}
@@ -212,8 +212,13 @@ func (this *BundleFile) AddFile(relativePath, file string) (*FATItem, error) {
 		item.Size = int64(len(blob))
 		this.FAT.Size += item.Size
 
+		// jump to the end of the data block
+		_, err = this.File.Seek(this.DataBaseOffset+item.Offset, os.SEEK_SET)
+		if err != nil {
+			return nil, err
+		}
+
 		// Write transformed content to package
-		// TODO seek to the item.Offset before write (maybe read other file and position changed)
 		_, err = this.File.Write(blob)
 		if err != nil {
 			return nil, err
@@ -222,6 +227,8 @@ func (this *BundleFile) AddFile(relativePath, file string) (*FATItem, error) {
 	// Add new item to FAT
 	this.FAT.Items = append(this.FAT.Items, item)
 	this.FAT.Count++
+
+	this.edited = true
 
 	return &item, nil
 }
@@ -277,8 +284,13 @@ func (this *BundleFile) Finalize() error {
 			return err
 		}
 
+		// jump to the end of the data block
+		_, err = this.File.Seek(this.DataBaseOffset+this.FAT.Size, os.SEEK_SET)
+		if err != nil {
+			return err
+		}
+
 		// Write FAT to package
-		// TODO seek to the correct position before write (maybe read other file and position changed)
 		this.Header.FatSize = int64(len(fatBlob))
 		this.File.Write(fatBlob)
 
