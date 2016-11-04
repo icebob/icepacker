@@ -244,6 +244,16 @@ func (this *BundleFile) ReadFileFromPath(filepath string) ([]byte, error) {
 	return nil, errors.New("File not found! Path: " + filepath)
 }
 
+// GetItemByPath searches the FATItem in FAT by `filepath`` and return the found item
+func (this *BundleFile) GetItemByPath(filepath string) (*FATItem, error) {
+	for _, item := range this.FAT.Items {
+		if item.Path == filepath {
+			return &item, nil
+		}
+	}
+	return nil, errors.New("File not found! Path: " + filepath)
+}
+
 // ReadFile reads the content of the file from the bundle
 func (this *BundleFile) ReadFile(item FATItem) ([]byte, error) {
 
