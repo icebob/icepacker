@@ -25,6 +25,27 @@ go get -u github.com/icebob/icepacker
 
 ## CLI usage (with `icepacker` executable)
 
+```
+NAME:
+   icepacker - IcePacker - bundle your files securely
+
+USAGE:
+   icepacker.exe [global options] command [command options] [arguments...]
+
+VERSION:
+   0.2.2 (Git: dev)
+
+COMMANDS:
+     pack     Create a pack from `SOURCE DIR` to `TARGET_FILE`
+     unpack   Extract a `PACK FILE` to `TARGET DIR`
+     list     List files from a `PACK FILE`
+     help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h     show help
+   --version, -v  print the version
+```
+
 ### Pack
 Use the `icepacker pack` command to create a bundle file. You can also compress and encrypt the bundle. 
 > Note! The bundle doesn't contain the parent folder.
@@ -416,6 +437,15 @@ type ListResult struct {
 -----|--------------------------
 `Err`| Contains an `error`if error occured. Otherwise `nil`.
 `FAT`| `FAT` (file list) of the bundle
+
+## TODO
+- use bundle in HTTP server as http.FileSystem
+	- https://github.com/mjibson/esc
+	- https://github.com/UnnoTed/fileb0x
+	- https://github.com/jteeuwen/go-bindata
+	- https://github.com/elazarl/go-bindata-assetfs#readme
+	- https://github.com/omeid/go-resources/blob/master/resources.go
+	- https://github.com/GeertJohan/go.rice
 
 ## License
 icepacker is available under the [MIT license](https://tldrlegal.com/license/mit-license).
